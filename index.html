@@ -16,9 +16,8 @@ body {
 
 /* ===== REEL UI ===== */
 #reel {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
+  inset: 0;
   background: black;
   color: white;
 }
@@ -39,11 +38,8 @@ body {
   animation: load 3s linear forwards;
 }
 
-@keyframes load {
-  to { width: 100%; }
-}
+@keyframes load { to { width: 100%; } }
 
-/* TOP BAR */
 .top {
   position: absolute;
   top: 8px;
@@ -55,7 +51,6 @@ body {
   opacity: 0.9;
 }
 
-/* RIGHT ICONS */
 .icons {
   position: absolute;
   right: 10px;
@@ -64,32 +59,19 @@ body {
   flex-direction: column;
   gap: 18px;
   font-size: 22px;
-  text-align: center;
 }
 
-.icons span {
-  opacity: 0.85;
-}
-
-/* CAPTION */
 .caption {
   position: absolute;
   bottom: 30px;
   left: 12px;
   font-size: 14px;
-  line-height: 1.4;
 }
 
-/* BUFFERING */
-.buffer {
+.loader {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.spinner {
+  margin: auto;
   width: 45px;
   height: 45px;
   border: 4px solid #333;
@@ -98,32 +80,21 @@ body {
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ===== GLITCH ===== */
-#glitch {
+/* ===== SECOND LOADING ===== */
+#loading2 {
   display: none;
   position: fixed;
   inset: 0;
   background: black;
   color: white;
-  font-size: 20px;
-  display: flex;
   align-items: center;
   justify-content: center;
-  animation: glitch 0.15s infinite;
+  flex-direction: column;
 }
 
-@keyframes glitch {
-  0% { transform: translate(0); }
-  25% { transform: translate(-3px, 2px); }
-  50% { transform: translate(3px, -2px); }
-  75% { transform: translate(-2px, -3px); }
-}
-
-/* ===== VALENTINE ===== */
+/* ===== LOVE ===== */
 #love {
   display: none;
   position: fixed;
@@ -132,18 +103,52 @@ body {
   color: white;
   text-align: center;
   padding-top: 22vh;
+  transition: transform 1.2s ease, opacity 1.2s ease;
+}
+
+.fade-out {
+  transform: rotateY(20deg) scale(0.95);
+  opacity: 0;
 }
 
 button {
-  margin: 15px;
-  padding: 15px 32px;
+  margin: 12px;
+  padding: 14px 32px;
   border-radius: 30px;
   border: none;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.yes {
   background: white;
   color: #ff4d6d;
+}
+
+.no {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+/* SHAKE */
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+#error {
+  margin-top: 10px;
+  color: #ffd6d6;
+  font-size: 14px;
+  display: none;
 }
 
 /* HEARTS */
@@ -151,7 +156,6 @@ button {
   position: absolute;
   bottom: -10vh;
   animation: float 4s linear forwards;
-  opacity: 0.9;
 }
 
 @keyframes float {
@@ -165,10 +169,8 @@ button {
 
 <body>
 
-<!-- REEL -->
 <div id="reel">
   <div class="progress"></div>
-
   <div class="video-placeholder"></div>
 
   <div class="top">
@@ -185,28 +187,29 @@ button {
 
   <div class="caption">
     <strong>@loading_reel</strong><br>
-    buffering… please wait
+    buffering…
   </div>
 
-  <div class="buffer">
-    <div class="spinner"></div>
-  </div>
+  <div class="loader"></div>
 </div>
 
-<!-- GLITCH -->
-<div id="glitch">
-  connection lost…
+<div id="loading2">
+  <div class="loader"></div>
+  <p>Reconnecting…</p>
 </div>
 
-<!-- LOVE -->
 <div id="love">
   <h1>Anne ❤️</h1>
   <p>This wasn’t a reel.</p>
   <p>I just wanted to ask you something.</p>
   <h2>Will you be my Valentine?</h2>
 
-  <button onclick="yes()">Yes 🥰</button>
-  <button onclick="yes()">Of course 😘</button>
+  <button class="yes" onclick="yes()">Yes 🥰</button>
+  <button class="yes" onclick="yes()">Of course 😘</button>
+  <button class="yes" onclick="yes()">DUHHHHHHH ❤️</button>
+  <button class="no" id="noBtn" onclick="nope()">no.</button>
+
+  <div id="error">⚠️ Error: option unavailable</div>
 </div>
 
 <audio id="music" loop>
@@ -215,15 +218,15 @@ button {
 
 <script>
 setTimeout(() => {
-  document.getElementById("reel").style.display = "none";
-  document.getElementById("glitch").style.display = "flex";
+  reel.style.display = "none";
+  loading2.style.display = "flex";
 }, 3200);
 
 setTimeout(() => {
-  document.getElementById("glitch").style.display = "none";
-  document.getElementById("love").style.display = "block";
+  loading2.style.display = "none";
+  love.style.display = "block";
   hearts();
-}, 4600);
+}, 5200);
 
 function hearts() {
   setInterval(() => {
@@ -234,17 +237,30 @@ function hearts() {
     h.style.fontSize = Math.random() * 24 + 16 + "px";
     document.body.appendChild(h);
     setTimeout(() => h.remove(), 4000);
-  }, 250);
+  }, 300);
 }
 
 function yes() {
-  document.getElementById("love").innerHTML = `
-    <h1>It's a date, Anne 💘</h1>
-    <p>February 14 (or 16th i think thats what we agreed on) </p>
-    <p>Me + You</p>
-    <p>I love you bunny.</p>
-  `;
-  document.getElementById("music").play();
+  love.classList.add("fade-out");
+  setTimeout(() => {
+    love.innerHTML = `
+      <h1>It's a date, Anne 💘</h1>
+      <p>February 14 (or 16th i think thats what we agreed on)</p>
+      <p>Me + You</p>
+      <p>I love you my bunny.</p>
+    `;
+    love.classList.remove("fade-out");
+    music.play();
+  }, 1200);
+}
+
+function nope() {
+  const btn = document.getElementById("noBtn");
+  const err = document.getElementById("error");
+  btn.classList.add("shake");
+  err.style.display = "block";
+
+  setTimeout(() => btn.classList.remove("shake"), 400);
 }
 </script>
 
