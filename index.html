@@ -2,39 +2,98 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Loading...</title>
+<title>Reel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+* { box-sizing: border-box; }
 body {
   margin: 0;
-  background: #000;
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+  background: black;
   overflow: hidden;
 }
 
-/* FB LOADING */
-#loading {
-  color: white;
+/* ===== REEL UI ===== */
+#reel {
+  position: relative;
+  width: 100vw;
   height: 100vh;
+  background: black;
+  color: white;
+}
+
+.video-placeholder {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #222, #000);
+}
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #1877f2;
+  width: 0%;
+  animation: load 3s linear forwards;
+}
+
+@keyframes load {
+  to { width: 100%; }
+}
+
+/* TOP BAR */
+.top {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* RIGHT ICONS */
+.icons {
+  position: absolute;
+  right: 10px;
+  bottom: 100px;
   display: flex;
   flex-direction: column;
+  gap: 18px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.icons span {
+  opacity: 0.85;
+}
+
+/* CAPTION */
+.caption {
+  position: absolute;
+  bottom: 30px;
+  left: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* BUFFERING */
+.buffer {
+  position: absolute;
+  inset: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.fb-logo {
-  font-size: 48px;
-  font-weight: bold;
-  color: #1877f2;
-  margin-bottom: 20px;
-}
-
 .spinner {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border: 4px solid #333;
-  border-top: 4px solid #1877f2;
+  border-top: 4px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -43,63 +102,61 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* GLITCH */
+/* ===== GLITCH ===== */
 #glitch {
   display: none;
+  position: fixed;
+  inset: 0;
+  background: black;
   color: white;
   font-size: 20px;
-  text-align: center;
-  animation: glitch 0.2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: glitch 0.15s infinite;
 }
 
 @keyframes glitch {
   0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(2px, -2px); }
-  60% { transform: translate(-2px, -2px); }
-  80% { transform: translate(2px, 2px); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, -3px); }
 }
 
-/* VALENTINE */
-#valentine {
+/* ===== VALENTINE ===== */
+#love {
   display: none;
+  position: fixed;
+  inset: 0;
   background: linear-gradient(135deg, #ff4d6d, #ff758f);
   color: white;
-  height: 100vh;
   text-align: center;
-  padding-top: 20vh;
+  padding-top: 22vh;
 }
 
 button {
   margin: 15px;
-  padding: 15px 30px;
+  padding: 15px 32px;
   border-radius: 30px;
   border: none;
   font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
-}
-
-.yes {
   background: white;
   color: #ff4d6d;
-  font-weight: bold;
 }
 
 /* HEARTS */
 .heart {
   position: absolute;
-  font-size: 20px;
-  animation: float 4s linear infinite;
-  color: #ffccd5;
+  bottom: -10vh;
+  animation: float 4s linear forwards;
+  opacity: 0.9;
 }
 
 @keyframes float {
-  from {
-    transform: translateY(100vh);
-    opacity: 1;
-  }
   to {
-    transform: translateY(-10vh);
+    transform: translateY(-120vh);
     opacity: 0;
   }
 }
@@ -108,61 +165,84 @@ button {
 
 <body>
 
-<div id="loading">
-  <div class="fb-logo">facebook</div>
-  <div class="spinner"></div>
-  <p>Loading reel...</p>
+<!-- REEL -->
+<div id="reel">
+  <div class="progress"></div>
+
+  <div class="video-placeholder"></div>
+
+  <div class="top">
+    <div>Reels</div>
+    <div>📷</div>
+  </div>
+
+  <div class="icons">
+    <span>❤️</span>
+    <span>💬</span>
+    <span>↗️</span>
+    <span>⋮</span>
+  </div>
+
+  <div class="caption">
+    <strong>@loading_reel</strong><br>
+    buffering… please wait
+  </div>
+
+  <div class="buffer">
+    <div class="spinner"></div>
+  </div>
 </div>
 
+<!-- GLITCH -->
 <div id="glitch">
-  <p>Something went wrong...</p>
+  connection lost…
 </div>
 
-<div id="valentine">
-  <h1>Hey you ❤️</h1>
-  <p>This was supposed to be a reel…</p>
-  <p><strong>Will you be my Valentine?</strong></p>
-  <button class="yes" onclick="accept()">Yes 🥰</button>
-  <button class="yes" onclick="accept()">Of course 😘</button>
+<!-- LOVE -->
+<div id="love">
+  <h1>Anne ❤️</h1>
+  <p>This wasn’t a reel.</p>
+  <p>I just wanted to ask you something.</p>
+  <h2>Will you be my Valentine?</h2>
+
+  <button onclick="yes()">Yes 🥰</button>
+  <button onclick="yes()">Of course 😘</button>
 </div>
 
 <audio id="music" loop>
-  <!-- Replace this with your own mp3 link if you want -->
   <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_7b0e6d3d5e.mp3" type="audio/mpeg">
 </audio>
 
 <script>
 setTimeout(() => {
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("glitch").style.display = "block";
-}, 3000);
+  document.getElementById("reel").style.display = "none";
+  document.getElementById("glitch").style.display = "flex";
+}, 3200);
 
 setTimeout(() => {
   document.getElementById("glitch").style.display = "none";
-  document.getElementById("valentine").style.display = "block";
-  startHearts();
-}, 4500);
+  document.getElementById("love").style.display = "block";
+  hearts();
+}, 4600);
 
-function startHearts() {
+function hearts() {
   setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = Math.random() * 20 + 15 + "px";
-    document.body.appendChild(heart);
-
-    setTimeout(() => {
-      heart.remove();
-    }, 4000);
-  }, 300);
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = Math.random() * 24 + 16 + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 4000);
+  }, 250);
 }
 
-function accept() {
-  document.getElementById("valentine").innerHTML = `
-    <h1>It's a date 💘</h1>
-    <p>February 14<br>Me + You</p>
-    <p>I love you.</p>
+function yes() {
+  document.getElementById("love").innerHTML = `
+    <h1>It's a date, Anne 💘</h1>
+    <p>February 14 (or 16th i think thats what we agreed on) </p>
+    <p>Me + You</p>
+    <p>I love you bunny.</p>
   `;
   document.getElementById("music").play();
 }
